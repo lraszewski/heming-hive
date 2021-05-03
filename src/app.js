@@ -4,13 +4,15 @@ const mongoose = require('mongoose');
 
 const app = express();
 dotenv.config();
-require('./db.js');
+const db = require('./db.js');
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
 const userRouter = require('./routes/userRouter');
+const lessonRouter = require('./routes/lessonRouter');
 
-app.use('/', userRouter);
+app.use('/user', userRouter);
+app.use('/lesson', lessonRouter);
 
 const port = process.env.PORT;
 app.listen(port, () => {
