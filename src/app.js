@@ -6,6 +6,7 @@ const app = express();
 dotenv.config();
 require('./db.js');
 app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true }));
 
 const userRouter = require('./routes/userRouter');
 
