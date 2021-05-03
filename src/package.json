@@ -1,7 +1,7 @@
 {
 	"name": "heming-hive",
 	"version": "1.0.0",
-	"description": "",
+	"description": "Tutoring web app",
 	"main": "app.js",
 	"scripts": {
 		"start": "node app.js",
