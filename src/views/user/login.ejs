@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Log In</title>
+	<%- include('../partials/head'); %>
+	<title>Login</title>
 </head>
 <body>
-
-	<!-- login form -->
-	<form action="" method="post">
-		<label for="email">Email:</label><br>
-		<input type="text" id="email" name="email"><br>
-		<label for="password">Password:</label><br>
-		<input type="text" id="password" name="password"><br>
-		<input type="submit" value="Submit">
-	</form>
-	
+	<div class="container">
+		<%- include('../partials/navbar'); %>
+		<section class="header">
+			<h2 class="title">Login</h2>
+		</section>
+		<div class="section" id="login">
+			<form action="" method="post">
+				<input class="u-full-width" type="text" id="email" name="email" placeholder="email">
+				<input class="u-full-width" type="password" id="password" name="password" placeholder="password">
+				<input class="u-full-width" type="submit" value="Login">
+			</form>
+		</div>
+	</div>
 </body>
 </html>

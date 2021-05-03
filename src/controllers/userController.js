@@ -14,21 +14,19 @@ async function validatePassword(password, hash) {
 async function createUser(req, res, next) {
 	try {
 		const { email, password, role } = req.body
-		const hash = hashPassword(password);
+		const hash = await hashPassword(password);
 		const user = new User({ 
-			email, 
-			password: hash, 
-			role: role || "basic" 
+			email,
+			password: hash,
+			role: role || "user" 
 		});
 
 		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 		user.token = token;
 		await user.save();
 
-		res.json({
-			data: user,
-			accessToken
-		});
+		res.header('user-token', token);
+		res.redirect('/');
 	}
 	catch (error) {
 		next(error);
@@ -108,12 +106,11 @@ async function login(req, res, next) {
 			return next(new Error('Password is not correct'));
 		}
 
-		const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 		await User.findByIdAndUpdate(user._id, { token });
-		res.status(200).json({
-			data: { email: user.email, role: user.role },
-			accessToken
-		})
+
+		res.header('user-token', token);
+		res.redirect('/');
 	}
 	catch (error) {
 		next(error);
@@ -123,6 +120,7 @@ async function login(req, res, next) {
 function grantAccess(action, resource) {
 	return async (req, res, next) => {
 		try {
+			verifyToken(req, res, next);
 			const permission = roles.can(req.user.role)[action](resource);
 			if (!permission.granted) {
 				return res.status(401).json({
@@ -139,17 +137,39 @@ function grantAccess(action, resource) {
 
 async function allowIfLoggedIn(req, res, next) {
 	try {
-		const user = res.locals.loggedInUser;
+		verifyToken(req, res, next);
+		const user = req.user
 		if (!user) {
 			return res.status(401).json({
 				error: "You need to be logged in to access this route"
 			});
 		}
-		req.user = user;
 		next();
 	}
 	catch (error) {
 		next(error);
+	}
+}
+
+async function verifyToken(req, res, next) {
+
+	const token = req.header('user-token'); 
+	if (!token) {
+		req.user = null
+	}
+
+	try {
+		const { userId, exp } = await jwt.verify(accessToken, process.env.JWT_SECRET);
+
+		if (exp < Date.now().valueOf() / 1000) {
+			return res.status(401).json({
+				error: "JWT token has expired, please login to obtain a new one"
+			});
+		}
+		req.user = User.findById(userId);
+		next();
+	} catch(err) {
+		res.status(400).send('Invalid Token');
 	}
 }
 
@@ -161,5 +181,6 @@ module.exports = {
 	deleteUser,
 	login,
 	grantAccess,
-	allowIfLoggedIn
+	allowIfLoggedIn,
+	verifyToken
 }
