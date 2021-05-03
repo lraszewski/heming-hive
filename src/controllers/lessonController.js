@@ -78,6 +78,7 @@ async function deleteLesson(req, res, next) {
 module.exports = {
 	createLesson,
 	readLesson,
+	readLessons,
 	updateLesson,
 	deleteLesson
 }
