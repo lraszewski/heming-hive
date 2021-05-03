@@ -157,9 +157,9 @@ async function allowIfLoggedIn(req, res, next) {
 			return res.status(401).json({
 				error: "You need to be logged in to access this route"
 			});
-			req.user = user;
-			next();
 		}
+		req.user = user;
+		next();
 	}
 	catch (error) {
 		next(error);
