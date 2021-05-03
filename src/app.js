@@ -1,12 +1,12 @@
 const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
 const app = express();
+dotenv.config();
+require('./db.js');
 
-// start app
-const port = 3000;
-if (process.env.PORT) {
-	port = process.env.PORT;
-}
+const port = process.env.PORT;
 app.listen(port, () => {
 	console.log("server is listening on port: " + port);
 });
