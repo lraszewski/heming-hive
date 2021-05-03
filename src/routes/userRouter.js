@@ -12,10 +12,10 @@ router.get('/login', (req, res) => {
 })
 router.post('/login', userController.login);
 
-router.get('/user/:userId', userController.allowIfLoggedIn, userController.readUser);
-router.put('/user/:userId', userController.allowIfLoggedIn, userController.grantAccess('updateAny', 'profile'), userController.updateUser);
-router.delete('/user/:userId', userController.allowIfLoggedIn, userController.grantAccess('deleteAny', 'profile'), userController.deleteUser);
+router.get('/:userId', userController.allowIfLoggedIn, userController.readUser);
+router.put('/:userId', userController.allowIfLoggedIn, userController.grantAccess('updateAny', 'profile'), userController.updateUser);
+router.delete('/:userId', userController.allowIfLoggedIn, userController.grantAccess('deleteAny', 'profile'), userController.deleteUser);
  
-router.get('/users', userController.allowIfLoggedIn, userController.grantAccess('readAny', 'profile'), userController.readUsers);
+router.get('/', userController.allowIfLoggedIn, userController.grantAccess('readAny', 'profile'), userController.readUsers);
 
 module.exports = router;
