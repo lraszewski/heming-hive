@@ -8,7 +8,7 @@ function roles() {
 
 	ac.grant("student")
 		.extend("user")
-		.readAny("video")
+		.readAny("lesson")
 	
 	ac.grant("administrator")
 		.extend("basic")
@@ -16,9 +16,9 @@ function roles() {
 		.readAny("profile")
 		.updateAny("profile")
 		.deleteAny("profile")
-		.createAny("video")
-		.updateAny("video")
-		.deleteAny("video")
+		.createAny("lesson")
+		.updateAny("lesson")
+		.deleteAny("lesson")
 }
 
 module.exports = {
