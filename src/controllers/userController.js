@@ -14,6 +14,12 @@ async function validatePassword(password, hash) {
 async function createUser(req, res, next) {
 	try {
 		const { email, password, role } = req.body
+
+		const userExists = await User.findOne({ email });
+		if (userExists)  {
+			return next(new Error('Account already exists'));
+		}
+
 		const hash = await hashPassword(password);
 		const user = new User({ 
 			email,
@@ -117,59 +123,35 @@ async function login(req, res, next) {
 	}
 }
 
+
 function grantAccess(action, resource) {
 	return async (req, res, next) => {
 		try {
-			verifyToken(req, res, next);
 			const permission = roles.can(req.user.role)[action](resource);
 			if (!permission.granted) {
 				return res.status(401).json({
-					error: "You do not have the required permissions to perform this action"
+					error: "You don't have enough permission to perform this action"
 				});
 			}
-			next();
-		}
-		catch (error) {
-			next(error);
+			next()
+		} catch (error) {
+			next(error)
 		}
 	}
 }
 
 async function allowIfLoggedIn(req, res, next) {
 	try {
-		verifyToken(req, res, next);
-		const user = req.user
+		const user = res.locals.loggedInUser;
 		if (!user) {
 			return res.status(401).json({
 				error: "You need to be logged in to access this route"
 			});
 		}
+		req.user = user;
 		next();
-	}
-	catch (error) {
+	} catch (error) {
 		next(error);
-	}
-}
-
-async function verifyToken(req, res, next) {
-
-	const token = req.header('user-token'); 
-	if (!token) {
-		req.user = null
-	}
-
-	try {
-		const { userId, exp } = await jwt.verify(accessToken, process.env.JWT_SECRET);
-
-		if (exp < Date.now().valueOf() / 1000) {
-			return res.status(401).json({
-				error: "JWT token has expired, please login to obtain a new one"
-			});
-		}
-		req.user = User.findById(userId);
-		next();
-	} catch(err) {
-		res.status(400).send('Invalid Token');
 	}
 }
 
@@ -181,6 +163,5 @@ module.exports = {
 	deleteUser,
 	login,
 	grantAccess,
-	allowIfLoggedIn,
-	verifyToken
+	allowIfLoggedIn
 }
