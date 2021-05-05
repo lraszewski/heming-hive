@@ -34,9 +34,7 @@ async function readLesson(req, res, next) {
 async function readLessons(req, res, next) {
 	try {
 		const lessons = await Lesson.find({});
-		res.status(200).json({
-			data: lessons
-		});
+		res.render('../views/lesson/lessons', { lessons: lessons });
 	}
 	catch (error) {
 		next(error);
