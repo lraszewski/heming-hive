@@ -1,14 +1,10 @@
 const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 const { roles } = require('../roles');
 
 async function hashPassword(password) {
 	return await bcrypt.hash(password, 10);
-}
-
-async function validatePassword(password, hash) {
-	return await bcrypt.compare(password, hash);
 }
 
 async function createUser(req, res, next) {
@@ -26,13 +22,9 @@ async function createUser(req, res, next) {
 			password: hash,
 			role: role || "user" 
 		});
-
-		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-		user.token = token;
 		await user.save();
 
-		res.header('user-token', token);
-		res.redirect('/');
+		res.redirect('/user/login');
 	}
 	catch (error) {
 		next(error);
@@ -99,30 +91,11 @@ async function deleteUser(req, res, next) {
 }
 
 async function login(req, res, next) {
-	try {
-		const { email, password } = req.body;
-
-		const user = await User.findOne({ email });
-		if (!user)  {
-			return next(new Error('Email does not exist'));
-		}
-
-		const validPassword = await validatePassword(password, user.password);
-		if (!validPassword) {
-			return next(new Error('Password is not correct'));
-		}
-
-		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-		await User.findByIdAndUpdate(user._id, { token });
-
-		res.header('user-token', token);
-		res.redirect('/');
-	}
-	catch (error) {
-		next(error);
-	}
+	passport.authenticate('local', {
+		successRedirect: '/',
+		failureRedirect: '/login'
+	})(req, res, next);
 }
-
 
 function grantAccess(action, resource) {
 	return async (req, res, next) => {
@@ -140,19 +113,18 @@ function grantAccess(action, resource) {
 	}
 }
 
-async function allowIfLoggedIn(req, res, next) {
-	try {
-		const user = res.locals.loggedInUser;
-		if (!user) {
-			return res.status(401).json({
-				error: "You need to be logged in to access this route"
-			});
-		}
-		req.user = user;
-		next();
-	} catch (error) {
-		next(error);
+function checkAuthenticated(req, res, next) {
+	if (req.isAuthenticated()) {
+		return next();
 	}
+	res.redirect('/user/login');
+}
+
+function checkNotAuthenticated(req, res, next) {
+	if (req.isAuthenticated()) {
+		return res.redirect('/');
+	}
+	return next();
 }
 
 module.exports = {
@@ -163,5 +135,6 @@ module.exports = {
 	deleteUser,
 	login,
 	grantAccess,
-	allowIfLoggedIn
+	checkAuthenticated,
+	checkNotAuthenticated
 }
