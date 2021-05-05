@@ -1,7 +1,7 @@
-const accessControl = require('accesscontrol');
-const ac = new accessControl();
-
-function roles() {
+const AccessControl = require("accesscontrol");
+const ac = new AccessControl();
+ 
+exports.roles = (function() {
 	ac.grant("user")
 		.readOwn("profile")
 		.updateOwn("profile")
@@ -11,7 +11,7 @@ function roles() {
 		.readAny("lesson")
 	
 	ac.grant("administrator")
-		.extend("basic")
+		.extend("user")
 		.extend("student")
 		.readAny("profile")
 		.updateAny("profile")
@@ -19,8 +19,6 @@ function roles() {
 		.createAny("lesson")
 		.updateAny("lesson")
 		.deleteAny("lesson")
-}
-
-module.exports = {
-	roles
-}
+	
+	return ac;
+})();
