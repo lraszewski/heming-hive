@@ -24,31 +24,6 @@
 	display: none;
 }
 
-.progress-bar {
-	background-color: black;
-	height: 1.2rem;
-}
-
-.progress-100 {
-	width: 100%;
-}
-
-.progress-80 {
-	width: 80%;
-}
-
-.progress-60 {
-	width: 60%;
-}
-
-.progress-40 {
-	width: 40%;
-}
-
-.progress-20 {
-	width: 20%;
-}
-
 /* larger than phone */
 @media (min-width: 550px) {
 
