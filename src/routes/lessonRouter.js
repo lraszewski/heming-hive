@@ -9,6 +9,6 @@ router.get('/create', (req, res) => {
 });
 router.post('/create', upload.single('file'), lessonController.createLesson);
 
-router.get('/', userController.allowIfLoggedIn, userController.grantAccess('readAny', 'lesson'), lessonController.readLessons);
+router.get('/', userController.checkAuthenticated, userController.grantAccess('readAny', 'lesson'), lessonController.readLessons);
 
 module.exports = router;
