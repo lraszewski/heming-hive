@@ -4,12 +4,12 @@ const mongoose = require('mongoose');
 const path = require('path');
 const flash = require('express-flash');
 const session = require('express-session');
-const passport = require('./passport');
+const passport = require('./middleware/passport');
 
 const app = express();
 
 dotenv.config();
-require('./db.js');
+require('./middleware/db.js');
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));

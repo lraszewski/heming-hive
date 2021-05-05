@@ -1,7 +1,7 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const { roles } = require('../roles');
+const { roles } = require('../middleware/roles');
 
 async function hashPassword(password) {
 	return await bcrypt.hash(password, 10);

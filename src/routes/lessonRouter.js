@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const lessonController = require('../controllers/lessonController');
 const userController = require('../controllers/userController');
-const upload = require('../db').upload;
+const upload = require('../middleware/db').upload;
 
 router.get('/create', (req, res) => {
     res.render('../views/lesson/create');
