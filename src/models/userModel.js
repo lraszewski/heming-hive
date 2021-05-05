@@ -14,10 +14,6 @@ const UserSchema = new mongoose.Schema({
 		type: String,
 		default: "user",
 		enum: ["user", "student", "administrator"]
-	},
-	token: {
-		type: String,
-		required: false
 	}
 });
 
