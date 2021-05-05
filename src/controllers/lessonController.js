@@ -1,5 +1,4 @@
 const Lesson = require('../models/lessonModel');
-const db = require('../db');
 
 async function createLesson(req, res, next) {
 	try {
@@ -19,7 +18,7 @@ async function createLesson(req, res, next) {
 async function readLesson(req, res, next) {
 	try {
 		const lessonId = req.params.lessonId;
-		const lesson = await User.findById(lessonId);
+		const lesson = await Lesson.findById(lessonId);
 		if (!lesson) {
 			return next(new Error('Lesson does not exist'));
 		}
