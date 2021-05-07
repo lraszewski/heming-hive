@@ -12,12 +12,13 @@
 		</section>
 		<div class="section" id="lessons">
 			<% if (lessons.length) {
-				lessons.forEach((lesson) => {
-					%>
+				lessons.forEach((lesson) => { %>
 					<a class="button u-full-width" href="/lesson/<%= lesson.id %>"><%= lesson.title %></a><br>
-					<%
-				  })
-			  } %>
+				<% })
+			} 
+			if (locals.user.role === "administrator") { %>
+				<a class="button button-primary u-full-width" href="/lesson/create">Create Lesson</a><br>
+			<% } %>
 		</div>
 	</div>
 </body>

@@ -44,6 +44,10 @@
 	margin-bottom: 1.5rem;
 }
 
+textarea {
+	min-height: 130px;
+}
+
 /* larger than phone */
 @media (min-width: 550px) {
 

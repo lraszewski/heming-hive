@@ -7,8 +7,11 @@ async function createLesson(req, res, next) {
 			description: req.body.description,
 			video: req.file.id
 		});
-		await lesson.save();
-		res.render('../views/lesson/create');
+		var lessonId
+		await lesson.save().then(saved => {
+			lessonId = saved.id;
+		});
+		res.redirect('/lesson/' + lessonId);
 	}
 	catch (error) {
 		next(error);

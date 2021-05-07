@@ -129,6 +129,7 @@ function grantAccess(action, resource) {
 
 function checkAuthenticated(req, res, next) {
 	if (req.isAuthenticated()) {
+		res.locals.user = req.user;
 		res.locals.login = req.session.passport;
 		return next();
 	}
@@ -144,6 +145,7 @@ function checkNotAuthenticated(req, res, next) {
 
 function checkAuthentication(req, res, next) {
 	if (req.isAuthenticated()) {
+		res.locals.user = req.user;
 		res.locals.login = req.session.passport;
 		return next();
 	}
