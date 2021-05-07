@@ -93,7 +93,7 @@ async function deleteUser(req, res, next) {
 async function login(req, res, next) {
 	passport.authenticate('local', {
 		successRedirect: '/',
-		failureRedirect: '/login'
+		failureRedirect: '/user/login'
 	})(req, res, next);
 }
 
