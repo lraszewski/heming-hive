@@ -5,12 +5,12 @@ const userController = require('../controllers/userController');
 router.get('/register', userController.checkNotAuthenticated, (req, res) => {
     res.render('../views/user/register');
 });
-router.post('/register', userController.createUser);
+router.post('/register', userController.checkNotAuthenticated, userController.createUser);
 
 router.get('/login', userController.checkNotAuthenticated, (req, res) => {
 	res.render('../views/user/login');
 })
-router.post('/login', userController.login);
+router.post('/login', userController.checkNotAuthenticated, userController.login);
 
 router.get('/logout', userController.checkAuthenticated, (req, res) => {
 	req.logout();

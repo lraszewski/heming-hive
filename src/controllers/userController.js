@@ -115,6 +115,7 @@ function grantAccess(action, resource) {
 
 function checkAuthenticated(req, res, next) {
 	if (req.isAuthenticated()) {
+		res.locals.login = req.session.passport;
 		return next();
 	}
 	res.redirect('/user/login');
@@ -123,6 +124,14 @@ function checkAuthenticated(req, res, next) {
 function checkNotAuthenticated(req, res, next) {
 	if (req.isAuthenticated()) {
 		return res.redirect('/');
+	}
+	return next();
+}
+
+function checkAuthentication(req, res, next) {
+	if (req.isAuthenticated()) {
+		res.locals.login = req.session.passport;
+		return next();
 	}
 	return next();
 }
@@ -136,5 +145,6 @@ module.exports = {
 	login,
 	grantAccess,
 	checkAuthenticated,
-	checkNotAuthenticated
+	checkNotAuthenticated,
+	checkAuthentication
 }

@@ -7,15 +7,18 @@
 			<li class="navbar-item">
 				<a class="navbar-link" href="/lesson">lessons</a>
 			</li>
+			<% if(locals.login === undefined) { %>
 			<li class="navbar-item">
 				<a class="navbar-link" href="/user/login">login</a>
 			</li>
 			<li class="navbar-item">
 				<a class="navbar-link" href="/user/register">register</a>
 			</li>
+			<% } else { %>
 			<li class="navbar-item">
 				<a class="navbar-link" href="/user/logout">logout</a>
 			</li>
+			<% } %>
 		</ul>
 	</div>
 </nav>
