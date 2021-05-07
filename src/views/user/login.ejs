@@ -11,6 +11,9 @@
 			<h2 class="title">Login</h2>
 		</section>
 		<div class="section" id="login">
+			<% if (locals.error) { %>
+				<p class="u-full-width error"><%= error.message %></p>
+			<% } %>
 			<form action="" method="post">
 				<input class="u-full-width" type="text" id="email" name="email" placeholder="email">
 				<input class="u-full-width" type="password" id="password" name="password" placeholder="password">
