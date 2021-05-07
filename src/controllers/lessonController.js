@@ -22,9 +22,7 @@ async function readLesson(req, res, next) {
 		if (!lesson) {
 			return next(new Error('Lesson does not exist'));
 		}
-		res.status(200).json({
-			data: lesson
-		});
+		res.render('../views/lesson/lesson', { lesson: lesson });
 	}
 	catch (error) {
 		next(error);

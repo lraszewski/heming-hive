@@ -26,9 +26,11 @@ app.use(passport.session());
 
 const userRouter = require('./routes/userRouter');
 const lessonRouter = require('./routes/lessonRouter');
+const videoRouter = require('./routes/videoRouter');
 
 app.use('/user', userRouter);
 app.use('/lesson', lessonRouter);
+app.use('/video', videoRouter);
 app.get('/', (req, res) => {
 	res.render('index');
 });

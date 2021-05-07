@@ -6,8 +6,6 @@ const crypto = require('crypto');
 const path = require('path');
 const multer = require('multer');
 
-grid.mongo = mongoose.mongo
-
 mongoose.connect(
 	process.env.CONNECTION_STRING,
 	{ 
@@ -16,22 +14,19 @@ mongoose.connect(
 	}
 );
 
-const db = mongoose.connection;
+const conn = mongoose.connection;
 
-db.on("error", err => {
+conn.on("error", err => {
 	console.error(err);
 	process.exit(1);
 })
 
-let gfs
-db.once("open", async () => {
-	gfs = grid(db.db);
-	gfs.collection('videos');
-	console.log("db connection started on " + db.host + ":" + db.port);
+conn.once("open", async () => {
+	console.log("db connection started on " + conn.host + ":" + conn.port);
 })
 
 const storage = new mgfs({
-	db: db,
+	db: conn,
 	file: (req, file) => {
 		return new Promise((resolve, reject) => {
 			crypto.randomBytes(16, (err, buf) => {

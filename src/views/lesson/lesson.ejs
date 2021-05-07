@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head'); %>
+	<title>Lesson</title>
+</head>
+<body>
+	<div class="container">
+		<%- include('../partials/navbar'); %>
+		<section class="header">
+			<h2 class="title"><%= lesson.title %></h2>
+		</section>
+		<div class="section" id="lesson">
+			<video class="u-full-width" id="video" controls autoplay>
+				<source src="/video/<%= lesson.video %>" type="video/mp4"/>
+			</video>
+			<br><br>
+			<p class="u-full-width">
+				<%= lesson.description %>
+			</p>
+		</div>
+	</div>
+</body>
+</html>

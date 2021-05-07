@@ -11,4 +11,6 @@ router.post('/create', upload.single('file'), lessonController.createLesson);
 
 router.get('/', userController.checkAuthenticated, userController.grantAccess('readAny', 'lesson'), lessonController.readLessons);
 
+router.get('/:lessonId', userController.checkAuthenticated, userController.grantAccess('readAny', 'lesson'), lessonController.readLesson);
+
 module.exports = router;
