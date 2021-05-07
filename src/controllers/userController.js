@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { roles } = require('../middleware/roles');
+const { userValidation } = require('../middleware/validation');
 
 async function hashPassword(password) {
 	return await bcrypt.hash(password, 10);
@@ -10,21 +11,23 @@ async function hashPassword(password) {
 async function createUser(req, res, next) {
 	try {
 		const { email, password, role } = req.body
-
-		const userExists = await User.findOne({ email });
-		if (userExists)  {
-			return next(new Error('Account already exists'));
+		
+		const {error} = userValidation(req.body);
+		if (error) {
+			res.locals.error = { message: error.details[0].message }
+			return res.status(400).render('../views/user/register');
 		}
 
 		const hash = await hashPassword(password);
 		const user = new User({ 
 			email,
 			password: hash,
-			role: role || "user" 
+			role: "user" 
 		});
 		await user.save();
 
-		res.redirect('/user/login');
+		return res.redirect('/user/login');
+
 	}
 	catch (error) {
 		next(error);
@@ -91,9 +94,20 @@ async function deleteUser(req, res, next) {
 }
 
 async function login(req, res, next) {
-	passport.authenticate('local', {
-		successRedirect: '/',
-		failureRedirect: '/user/login'
+	passport.authenticate('local', function(err, user, info) {
+		if (err) {
+			return next(err);
+		}
+		if (!user) {
+			res.locals.error = { message: "Invalid username or password" }
+			return res.status(401).render('../views/user/login');
+		}
+		req.logIn(user, function(err) {
+			if (err) {
+				return next(err);
+			}
+			return res.redirect('/');
+		});
 	})(req, res, next);
 }
 
