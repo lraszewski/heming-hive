@@ -12,6 +12,11 @@ router.get('/login', userController.checkNotAuthenticated, (req, res) => {
 })
 router.post('/login', userController.login);
 
+router.get('/logout', userController.checkAuthenticated, (req, res) => {
+	req.logout();
+	res.redirect('/');
+});
+
 router.get('/:userId', userController.checkAuthenticated, userController.readUser);
 router.put('/:userId', userController.checkAuthenticated, userController.grantAccess('updateAny', 'profile'), userController.updateUser);
 router.delete('/:userId', userController.checkAuthenticated, userController.grantAccess('deleteAny', 'profile'), userController.deleteUser);
