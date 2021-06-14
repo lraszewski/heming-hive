@@ -2,21 +2,24 @@
 	<div class="container">
 		<ul class="navbar-list">
 			<li class="navbar-item">
-				<a class="navbar-link" href="/">home</a>
+				<a class="navbar-link" href="/">Home</a>
 			</li>
 			<li class="navbar-item">
-				<a class="navbar-link" href="/lesson">lessons</a>
+				<a class="navbar-link" href="/lesson">Lessons</a>
 			</li>
 			<% if(locals.login === undefined) { %>
 			<li class="navbar-item">
-				<a class="navbar-link" href="/user/login">login</a>
+				<a class="navbar-link" href="/user/login">Login</a>
 			</li>
 			<li class="navbar-item">
-				<a class="navbar-link" href="/user/register">register</a>
+				<a class="navbar-link" href="/user/register">Register</a>
 			</li>
 			<% } else { %>
 			<li class="navbar-item">
-				<a class="navbar-link" href="/user/logout">logout</a>
+				<a class="navbar-link" href="/user/<%= user.id %>">Profile</a>
+			</li>
+			<li class="navbar-item">
+				<a class="navbar-link" href="/user/logout">Logout</a>
 			</li>
 			<% } %>
 		</ul>

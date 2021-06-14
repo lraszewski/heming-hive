@@ -11,7 +11,7 @@ const userValidation = data => {
             .max(255)
             .required(),
 		role: joi.string()
-			.valid('user', 'student', 'admin')
+			.valid('user', 'student', 'administrator')
     });
     return schema.validate(data);
 };

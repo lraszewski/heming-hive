@@ -19,6 +19,7 @@ exports.roles = (function() {
 		.createAny("lesson")
 		.updateAny("lesson")
 		.deleteAny("lesson")
+		.updateAny("role")
 	
 	return ac;
 })();

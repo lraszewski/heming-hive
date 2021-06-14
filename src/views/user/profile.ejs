@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head'); %>
+	<title>Profile</title>
+</head>
+<body>
+	<div class="container">
+		<%- include('../partials/navbar'); %>
+		<section class="header">
+			<h2 class="title">Edit Profile</h2>
+		</section>
+		<div class="section" id="login">
+			<% if (locals.error) { %>
+			<p class="u-full-width error"><%= error.message %></p>
+			<% } %>
+			<form action="" method="post">
+				<input class="u-full-width" type="text" id="email" name="email" placeholder="email" value="<%= user.email %>">
+				<% if (showRole) { %>
+				<select class="u-full-width" id="role" name="role">
+					<option value="user" <% if (user.role == "user") { %>selected<% } %>>User</option>
+					<option value="student" <% if (user.role == "student") { %>selected<% } %>>Student</option>
+					<option value="administrator" <% if (user.role == "administrator") { %>selected<% } %>>Administrator</option>
+				</select>
+				<% } %>
+				<input class="u-full-width" type="password" id="password1" name="password1" placeholder="new password">
+				<input class="u-full-width" type="password" id="password2" name="password2" placeholder="confirm password">
+				<input class="u-full-width" type="submit" value="Update">
+			</form>
+		</div>
+	</div>
+</body>
+</html>

@@ -41,9 +41,12 @@ async function readUser(req, res, next) {
 		if (!user) {
 			return next(new Error('User does not exist'));
 		}
-		res.status(200).json({
-			data: user
-		});
+		const permission = roles.can(req.user.role)["updateOwn"]("role");
+		var showRole = false;
+		if (permission.granted) {
+			showRole = true;
+		}
+		res.render('../views/user/profile', { user: user, showRole: showRole });
 	}
 	catch (error) {
 		next(error);
@@ -64,14 +67,34 @@ async function readUsers(req, res, next) {
 
 async function updateUser(req, res, next) {
 	try {
-		const update = req.body
 		const userId = req.params.userId;
-		await User.findByIdAndUpdate(userId, update);
 		const user = await User.findById(userId);
-		res.status(200).json({
-			data: user,
-			message: 'User has been updated'
-		});
+
+		const { email, password1, password2 } = req.body;
+		const permission = roles.can(req.user.role)["updateOwn"]("role");
+		var role = user.role;
+		var showRole = false;
+		if (permission.granted) {
+			role = req.body.role;
+			showRole = true;
+		}
+
+		if (password1 != password2) {
+			res.locals.error = { message: "Passwords do not match" };
+			return res.status(400).render('../views/user/profile', { user: user, showRole: showRole });
+		}
+
+		const { error } = userValidation({ email: email, password: password1, role: role });
+		if (error) {
+			res.locals.error = { message: error.details[0].message }
+			return res.status(400).render('../views/user/profile', { user: user, showRole: showRole });
+		}
+		const hash = await hashPassword(password1);
+		user.email = email;
+		user.password = hash;
+		user.role = role;
+		await user.save();
+		return res.redirect('/user/' + user.id);
 	}
 	catch (error) {
 		next(error);
@@ -115,9 +138,15 @@ function grantAccess(action, resource) {
 	return async (req, res, next) => {
 		try {
 			const permission = roles.can(req.user.role)[action](resource);
-			if (!permission.granted) {
+			var granted = permission.granted;
+			if (req.user.role != "administrator" && typeof req.params.userId !== "undefined") {
+				if (req.user.id != req.params.userId) {
+					granted = false;
+				}
+			}
+			if (!granted) {
 				return res.status(401).json({
-					error: "You don't have enough permission to perform this action"
+					error: "You do not have enough permission to perform this action"
 				});
 			}
 			next()

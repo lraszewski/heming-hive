@@ -50,7 +50,7 @@ async function deleteLesson(req, res, next) {
 		const videoId = lesson.video;
 		const error = await videoController.deleteVideo(videoId);
 		if (error) {
-			next(error);
+			next(new Error(error));
 		}
 		await Lesson.findByIdAndDelete(lessonId);
 		res.redirect('/lesson/');
