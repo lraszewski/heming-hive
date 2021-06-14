@@ -19,6 +19,18 @@ async function readVideo(req, res, next) {
 	}
 }
 
+async function deleteVideo(videoId) {
+	const conn = mongoose.connection;
+	gfs = new grid(conn.db, mongoose.mongo);
+	gfs.collection('videos');
+	gfs.remove({ _id: videoId, root: 'videos' }, (error, gridStore) => {
+		if (error) {
+			return error;
+		}
+	});
+}
+
 module.exports = {
-	readVideo
+	readVideo,
+	deleteVideo
 }

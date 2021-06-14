@@ -18,6 +18,9 @@
 			<p class="u-full-width">
 				<%= lesson.description %>
 			</p>
+			<% if (locals.user.role === "administrator") { %>
+				<a class="button button-danger u-full-width" href="/lesson/delete/<%= lesson.id %>">Delete</a>
+			<% } %>
 		</div>
 	</div>
 </body>
