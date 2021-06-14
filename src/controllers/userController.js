@@ -10,9 +10,14 @@ async function hashPassword(password) {
 
 async function createUser(req, res, next) {
 	try {
-		const { email, password, role } = req.body
+		const { email, password, passwordConfirmation, role } = req.body
 		
-		const {error} = userValidation(req.body);
+		if (password != passwordConfirmation) {
+			res.locals.error = { message: "Passwords do not match" };
+			return res.status(400).render('../views/user/register');
+		}
+
+		const {error} = userValidation({ email: email, password: password, role: role });
 		if (error) {
 			res.locals.error = { message: error.details[0].message }
 			return res.status(400).render('../views/user/register');
@@ -36,17 +41,13 @@ async function createUser(req, res, next) {
 
 async function readUser(req, res, next) {
 	try {
+		// use rUser to avoid collision with user property set by passport
 		const userId = req.params.userId;
-		const user = await User.findById(userId);
-		if (!user) {
+		const rUser = await User.findById(userId);
+		if (!rUser) {
 			return next(new Error('User does not exist'));
 		}
-		const permission = roles.can(req.user.role)["updateOwn"]("role");
-		var showRole = false;
-		if (permission.granted) {
-			showRole = true;
-		}
-		res.render('../views/user/profile', { user: user, showRole: showRole });
+		res.render('../views/user/profile', { rUser: rUser });
 	}
 	catch (error) {
 		next(error);
@@ -55,10 +56,8 @@ async function readUser(req, res, next) {
 
 async function readUsers(req, res, next) {
 	try {
-		const users = await User.find({});
-		res.status(200).json({
-			data: users
-		});
+		const rUsers = await User.find({});
+		res.render('../views/user/users', { rUsers: rUsers });
 	}
 	catch (error) {
 		next(error);
@@ -68,33 +67,31 @@ async function readUsers(req, res, next) {
 async function updateUser(req, res, next) {
 	try {
 		const userId = req.params.userId;
-		const user = await User.findById(userId);
+		const rUser = await User.findById(userId);
 
-		const { email, password1, password2 } = req.body;
+		const { email, password, passwordConfirmation } = req.body;
 		const permission = roles.can(req.user.role)["updateOwn"]("role");
-		var role = user.role;
-		var showRole = false;
+		var role = rUser.role;
 		if (permission.granted) {
 			role = req.body.role;
-			showRole = true;
 		}
 
-		if (password1 != password2) {
+		if (password != passwordConfirmation) {
 			res.locals.error = { message: "Passwords do not match" };
-			return res.status(400).render('../views/user/profile', { user: user, showRole: showRole });
+			return res.status(400).render('../views/user/profile', { rUser: rUser });
 		}
 
-		const { error } = userValidation({ email: email, password: password1, role: role });
+		const { error } = userValidation({ email: email, password: password, role: role });
 		if (error) {
 			res.locals.error = { message: error.details[0].message }
-			return res.status(400).render('../views/user/profile', { user: user, showRole: showRole });
+			return res.status(400).render('../views/user/profile', { rUser: rUser });
 		}
-		const hash = await hashPassword(password1);
-		user.email = email;
-		user.password = hash;
-		user.role = role;
-		await user.save();
-		return res.redirect('/user/' + user.id);
+		const hash = await hashPassword(password);
+		rUser.email = email;
+		rUser.password = hash;
+		rUser.role = role;
+		await rUser.save();
+		return res.redirect('/user/' + rUser.id);
 	}
 	catch (error) {
 		next(error);

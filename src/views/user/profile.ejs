@@ -15,16 +15,16 @@
 			<p class="u-full-width error"><%= error.message %></p>
 			<% } %>
 			<form action="" method="post">
-				<input class="u-full-width" type="text" id="email" name="email" placeholder="email" value="<%= user.email %>">
-				<% if (showRole) { %>
+				<input class="u-full-width" type="text" id="email" name="email" placeholder="email" value="<%= rUser.email %>">
+				<% if(locals.user.role == "administrator") { %>
 				<select class="u-full-width" id="role" name="role">
-					<option value="user" <% if (user.role == "user") { %>selected<% } %>>User</option>
-					<option value="student" <% if (user.role == "student") { %>selected<% } %>>Student</option>
-					<option value="administrator" <% if (user.role == "administrator") { %>selected<% } %>>Administrator</option>
+					<option value="user" <% if (rUser.role == "user") { %>selected<% } %>>User</option>
+					<option value="student" <% if (rUser.role == "student") { %>selected<% } %>>Student</option>
+					<option value="administrator" <% if (rUser.role == "administrator") { %>selected<% } %>>Administrator</option>
 				</select>
 				<% } %>
-				<input class="u-full-width" type="password" id="password1" name="password1" placeholder="new password">
-				<input class="u-full-width" type="password" id="password2" name="password2" placeholder="confirm password">
+				<input class="u-full-width" type="password" id="password" name="password" placeholder="new password">
+				<input class="u-full-width" type="password" id="passwordConfirmation" name="passwordConfirmation" placeholder="confirm password">
 				<input class="u-full-width" type="submit" value="Update">
 			</form>
 		</div>

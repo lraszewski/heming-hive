@@ -4,9 +4,6 @@
 			<li class="navbar-item">
 				<a class="navbar-link" href="/">Home</a>
 			</li>
-			<li class="navbar-item">
-				<a class="navbar-link" href="/lesson">Lessons</a>
-			</li>
 			<% if(locals.login === undefined) { %>
 			<li class="navbar-item">
 				<a class="navbar-link" href="/user/login">Login</a>
@@ -15,6 +12,14 @@
 				<a class="navbar-link" href="/user/register">Register</a>
 			</li>
 			<% } else { %>
+			<li class="navbar-item">
+				<a class="navbar-link" href="/lesson">Lessons</a>
+			</li>
+			<% if(locals.user.role == "administrator") { %>
+			<li class="navbar-item">
+				<a class="navbar-link" href="/user">Users</a>
+			</li>
+			<% } %>
 			<li class="navbar-item">
 				<a class="navbar-link" href="/user/<%= user.id %>">Profile</a>
 			</li>

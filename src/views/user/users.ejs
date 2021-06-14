@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head'); %>
+	<title>Users</title>
+</head>
+<body>
+	<div class="container">
+		<%- include('../partials/navbar'); %>
+		<section class="header">
+			<h2 class="title">Users</h2>
+		</section>
+		<div class="section" id="users">
+			<% if (rUsers.length) {
+				rUsers.forEach((rUser) => { %>
+					<a class="button u-full-width" href="/user/<%= rUser.id %>"><%= rUser.email %></a><br>
+				<% }) %>
+			<% } %>
+		</div>
+	</div>
+</body>
+</html>
