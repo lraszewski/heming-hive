@@ -101,12 +101,14 @@ async function updateUser(req, res, next) {
 async function deleteUser(req, res, next) {
 	try {
 		const userId = req.params.userId;
+		const user = req.user;
 		await User.findByIdAndDelete(userId);
-
-		res.status(200).json({
-			data: null,
-			message: 'User has been deleted'
-		});
+		if (user.id == userId) {
+			return res.redirect('/user/logout');
+		}
+		else {
+			return res.redirect('/user/');
+		}
 	}
 	catch (error) {
 		next(error);

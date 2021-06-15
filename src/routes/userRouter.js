@@ -19,7 +19,8 @@ router.get('/logout', userController.checkAuthenticated, (req, res) => {
 
 router.get('/:userId', userController.checkAuthenticated, userController.grantAccess('readOwn', 'profile'), userController.readUser);
 router.post('/:userId', userController.checkAuthenticated, userController.grantAccess('updateOwn', 'profile'), userController.updateUser);
-router.delete('/:userId', userController.checkAuthenticated, userController.grantAccess('deleteAny', 'profile'), userController.deleteUser);
+
+router.get('/delete/:userId', userController.checkAuthenticated, userController.grantAccess('deleteOwn', 'profile'), userController.deleteUser);
  
 router.get('/', userController.checkAuthenticated, userController.grantAccess('readAny', 'profile'), userController.readUsers);
 
