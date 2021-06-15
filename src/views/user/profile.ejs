@@ -15,7 +15,7 @@
 			<p class="u-full-width error"><%= error.message %></p>
 			<% } %>
 			<form action="" method="post">
-				<input class="u-full-width" type="text" id="email" name="email" placeholder="email" value="<%= rUser.email %>">
+				<input class="u-full-width" type="email" id="email" name="email" placeholder="email" value="<%= rUser.email %>">
 				<% if(locals.user.role == "administrator") { %>
 				<select class="u-full-width" id="role" name="role">
 					<option value="user" <% if (rUser.role == "user") { %>selected<% } %>>User</option>

@@ -16,13 +16,15 @@ async function hashPassword(password) {
 
 async function createUser(req, res, next) {
 	try {
-		const { email, password, passwordConfirmation, role } = req.body
+		var { email, password, passwordConfirmation, role } = req.body
 		
+		email = email.toLowerCase();
+
 		if (password != passwordConfirmation) {
 			res.locals.error = { message: "Passwords do not match" };
 			return res.status(400).render('../views/user/register');
 		}
-
+		
 		const {error} = userValidation({ email: email, password: password, role: role });
 		if (error) {
 			res.locals.error = { message: error.details[0].message }
@@ -78,11 +80,11 @@ async function updateUser(req, res, next) {
 			throw new Error('User does not exist');
 		}
 
-		const { email, password, passwordConfirmation } = req.body;
+		var { email, role, password, passwordConfirmation } = req.body;
+		email = email.toLowerCase();
 		const permission = roles.can(req.user.role)["updateOwn"]("role");
-		var role = rUser.role;
-		if (permission.granted) {
-			role = req.body.role;
+		if (!permission.granted) {
+			role = rUser.role;
 		}
 
 		if (password != passwordConfirmation) {
@@ -131,6 +133,7 @@ async function deleteUser(req, res, next) {
 
 async function login(req, res, next) {
 	try {
+		req.body.email = req.body.email.toLowerCase();
 		passport.authenticate('local', function(error, user, info) {
 			if (error) {
 				throw error;
