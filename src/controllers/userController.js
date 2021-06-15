@@ -20,6 +20,11 @@ async function createUser(req, res, next) {
 		
 		email = email.toLowerCase();
 
+		if (User.exists({ email: email })) {
+			res.locals.error = { message: "A user with that email already exists" };
+			return res.status(400).render('../views/user/register');
+		}
+
 		if (password != passwordConfirmation) {
 			res.locals.error = { message: "Passwords do not match" };
 			return res.status(400).render('../views/user/register');
