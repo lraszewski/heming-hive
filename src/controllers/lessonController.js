@@ -1,5 +1,6 @@
 const Lesson = require('../models/lessonModel');
 const videoController = require('./videoController.js');
+const errorController = require('./errorController.js');
 
 async function createLesson(req, res, next) {
 	try {
@@ -15,7 +16,7 @@ async function createLesson(req, res, next) {
 		res.redirect('/lesson/' + lessonId);
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
@@ -29,7 +30,7 @@ async function readLesson(req, res, next) {
 		res.render('../views/lesson/lesson', { lesson: lesson });
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
@@ -39,7 +40,7 @@ async function readLessons(req, res, next) {
 		res.render('../views/lesson/lessons', { lessons: lessons });
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
@@ -50,13 +51,13 @@ async function deleteLesson(req, res, next) {
 		const videoId = lesson.video;
 		const error = await videoController.deleteVideo(videoId);
 		if (error) {
-			next(new Error(error));
+			throw new Error(error);
 		}
 		await Lesson.findByIdAndDelete(lessonId);
 		res.redirect('/lesson/');
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 

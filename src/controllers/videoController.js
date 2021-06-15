@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const grid = require('gridfs-stream');
+const errorController = require('./errorController.js');
 
 async function readVideo(req, res, next) {
 	try {
@@ -15,19 +16,24 @@ async function readVideo(req, res, next) {
 		readstream.pipe(res);
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
 async function deleteVideo(videoId) {
-	const conn = mongoose.connection;
-	gfs = new grid(conn.db, mongoose.mongo);
-	gfs.collection('videos');
-	gfs.remove({ _id: videoId, root: 'videos' }, (error, gridStore) => {
-		if (error) {
-			return error;
-		}
-	});
+	try {
+		const conn = mongoose.connection;
+		gfs = new grid(conn.db, mongoose.mongo);
+		gfs.collection('videos');
+		gfs.remove({ _id: videoId, root: 'videos' }, (error, gridStore) => {
+			if (error) {
+				throw error;
+			}
+		});
+	}
+	catch (error) {
+		errorController.handleError(error, req, res, next);
+	}
 }
 
 module.exports = {

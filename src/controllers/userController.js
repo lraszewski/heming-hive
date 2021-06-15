@@ -3,9 +3,15 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { roles } = require('../middleware/roles');
 const { userValidation } = require('../middleware/validation');
+const errorController = require('./errorController.js');
 
 async function hashPassword(password) {
-	return await bcrypt.hash(password, 10);
+	try {
+		return await bcrypt.hash(password, 10);
+	}
+	catch (error) {
+		errorController.handleError(error, req, res, next);
+	}
 }
 
 async function createUser(req, res, next) {
@@ -32,10 +38,9 @@ async function createUser(req, res, next) {
 		await user.save();
 
 		return res.redirect('/user/login');
-
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
@@ -45,12 +50,12 @@ async function readUser(req, res, next) {
 		const userId = req.params.userId;
 		const rUser = await User.findById(userId);
 		if (!rUser) {
-			return next(new Error('User does not exist'));
+			throw new Error('User does not exist');
 		}
 		res.render('../views/user/profile', { rUser: rUser });
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
@@ -60,7 +65,7 @@ async function readUsers(req, res, next) {
 		res.render('../views/user/users', { rUsers: rUsers });
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
@@ -68,6 +73,10 @@ async function updateUser(req, res, next) {
 	try {
 		const userId = req.params.userId;
 		const rUser = await User.findById(userId);
+
+		if (!rUser) {
+			throw new Error('User does not exist');
+		}
 
 		const { email, password, passwordConfirmation } = req.body;
 		const permission = roles.can(req.user.role)["updateOwn"]("role");
@@ -94,7 +103,7 @@ async function updateUser(req, res, next) {
 		return res.redirect('/user/' + rUser.id);
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
@@ -102,6 +111,11 @@ async function deleteUser(req, res, next) {
 	try {
 		const userId = req.params.userId;
 		const user = req.user;
+
+		if (!User.exists({ _id: userId})) {
+			throw new Error('User does not exist');
+		}
+
 		await User.findByIdAndDelete(userId);
 		if (user.id == userId) {
 			return res.redirect('/user/logout');
@@ -111,26 +125,31 @@ async function deleteUser(req, res, next) {
 		}
 	}
 	catch (error) {
-		next(error);
+		errorController.handleError(error, req, res, next);
 	}
 }
 
 async function login(req, res, next) {
-	passport.authenticate('local', function(err, user, info) {
-		if (err) {
-			return next(err);
-		}
-		if (!user) {
-			res.locals.error = { message: "Invalid username or password" }
-			return res.status(401).render('../views/user/login');
-		}
-		req.logIn(user, function(err) {
-			if (err) {
-				return next(err);
+	try {
+		passport.authenticate('local', function(error, user, info) {
+			if (error) {
+				throw error;
 			}
-			return res.redirect('/');
-		});
-	})(req, res, next);
+			if (!user) {
+				res.locals.error = { message: "Invalid username or password" }
+				return res.status(401).render('../views/user/login');
+			}
+			req.logIn(user, function(error) {
+				if (error) {
+					throw error;
+				}
+				return res.redirect('/');
+			});
+		})(req, res, next);
+	}
+	catch (error) {
+		errorController.handleError(error, req, res, next);
+	}
 }
 
 function grantAccess(action, resource) {
@@ -144,40 +163,54 @@ function grantAccess(action, resource) {
 				}
 			}
 			if (!granted) {
-				return res.status(401).json({
-					error: "You do not have enough permission to perform this action"
-				});
+				res.status(401);
+				throw new Error('You do not have permission to perform this action');
 			}
-			next()
+			next();
 		} catch (error) {
-			next(error)
+			errorController.handleError(error, req, res, next);
 		}
 	}
 }
 
 function checkAuthenticated(req, res, next) {
-	if (req.isAuthenticated()) {
-		res.locals.user = req.user;
-		res.locals.login = req.session.passport;
-		return next();
+	try {
+		if (req.isAuthenticated()) {
+			res.locals.user = req.user;
+			res.locals.login = req.session.passport;
+			return next();
+		}
+		res.redirect('/user/login');
 	}
-	res.redirect('/user/login');
+	catch (error) {
+		errorController.handleError(error, req, res, next);
+	}
 }
 
 function checkNotAuthenticated(req, res, next) {
-	if (req.isAuthenticated()) {
-		return res.redirect('/');
+	try {
+		if (req.isAuthenticated()) {
+			return res.redirect('/');
+		}
+		return next();
 	}
-	return next();
+	catch (error) {
+		errorController.handleError(error, req, res, next);
+	}
 }
 
 function checkAuthentication(req, res, next) {
-	if (req.isAuthenticated()) {
-		res.locals.user = req.user;
-		res.locals.login = req.session.passport;
+	try {
+		if (req.isAuthenticated()) {
+			res.locals.user = req.user;
+			res.locals.login = req.session.passport;
+			return next();
+		}
 		return next();
 	}
-	return next();
+	catch (error) {
+		errorController.handleError(error, req, res, next);
+	}
 }
 
 module.exports = {

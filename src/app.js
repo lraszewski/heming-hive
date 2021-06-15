@@ -31,7 +31,7 @@ const homeRouter = require('./routes/homeRouter');
 app.use('/user', userRouter);
 app.use('/lesson', lessonRouter);
 app.use('/video', videoRouter);
-app.use('/', homeRouter);
+app.use('/', homeRouter);  
 
 const port = process.env.PORT;
 app.listen(port, () => {
