@@ -10,14 +10,14 @@ This web application is designed to accent a tutoring business. It provides an o
 
 1. Ensure Node JS is installed and updated. This can be done here: <https://nodejs.org/en/>.
 2. Create a MongoDB to store user data, easily done using this service: <https://www.mongodb.com/cloud/atlas>.
-3. Pull down the source code.
+3. Replace the source code.
 4. Navigate to the `src` directory, and create a `.env` file with the following properties:
 
 	```.env
-	CONNECTION_STRING = (connection string)
-	PORT = (port for the application)
-	SESSION_SECRET = (secret string)
-    ```
+	CONNECTION_STRING=
+	PORT=
+	SESSION_SECRET=
+	```
 
 5. Open a terminal at the `src` directory.
 6. Run `npm install`.
@@ -25,21 +25,11 @@ This web application is designed to accent a tutoring business. It provides an o
 	- `npm start` for production environments.
 	- `npm run dev` for development environments.
 
-## Dependencies
+## To Do
 
-- accesscontrol
-- bcrypt
-- body-parser
-- dotenv
-- ejs
-- express
-- express-flash
-- express-session
-- gridfs-stream
-- method-override
-- mongodb
-- mongoose
-- multer
-- multer-gridfs-storage
-- passport
-- passport-local
+1. Navbar does not appear on mobile.
+2. User edit page needs all fields for form to submit, should just update changed values.
+3. Add a welcome video to the home page.
+4. Add a drop down to sort by lesson subjects. Possibly a show more, show less button. 
+5. Investigate alternatives to gfs.
+
